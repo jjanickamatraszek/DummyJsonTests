@@ -10,4 +10,3 @@ target/
 *.ipr
 
 /reports
-/src/main/resources/agent.properties

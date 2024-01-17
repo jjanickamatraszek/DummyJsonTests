@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="All tests Suite">
+    <test name="API tests">
+        <classes>
+            <class name="ApiTests">
+                <methods>
+                    <include name="addPostWithFullInfoTest"></include>
+                    <include name="getPostTest"></include>
+                    <include name="updatePostTitleTest"></include>
+                    <include name="deletePost_v1Test"></include>
+                    <include name="deletePost_v2Test"></include>
+                    <include name="getAllPostsLimitedWithSkipTest"></include>
+                    <include name="getAllPostsOfUserTest"></include>
+                    <include name="dontGetPostsOfNotExistingUser"></include>
+                    <include name="searchPostsTest"></include>
+                    <include name="getDefaultAllPostResponseWhenLimitAndSkipAreNegativeTest"></include>
+                    <include name="getSelectedEntriesFromGetAllPostTest"></include>
+                </methods>
+            </class>
+        </classes>
+    </test>
+</suite>
