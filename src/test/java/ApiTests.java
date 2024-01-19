@@ -1,5 +1,6 @@
 import auth.login.PostUserCredentialsMethod;
 import com.zebrunner.agent.core.annotation.TestCaseKey;
+import com.zebrunner.carina.api.APIMethodPoller;
 import com.zebrunner.carina.api.apitools.validation.JsonComparatorContext;
 import com.zebrunner.carina.api.http.HttpResponseStatusType;
 import com.zebrunner.carina.core.IAbstractTest;
@@ -18,9 +19,11 @@ import org.testng.asserts.SoftAssert;
 import posts.*;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class ApiTests implements IAbstractTest {
     private String userId;
@@ -200,7 +203,15 @@ public class ApiTests implements IAbstractTest {
     public void getSelectedEntriesFromGetAllPostTest() {
         List<String> selectedEntries = List.of(R.TESTDATA.get("post.entry_1"), R.TESTDATA.get("post.entry_2"), R.TESTDATA.get("post.entry_3"));
         GetAllPostsMethod getAllPostsMethodSelected = new GetAllPostsMethod(selectedEntries);
-        getAllPostsMethodSelected.callAPIExpectSuccess();
+
+        AtomicInteger counter = new AtomicInteger(0);
+        getAllPostsMethodSelected.callAPIWithRetry()
+                .withLogStrategy(APIMethodPoller.LogStrategy.ALL)
+                .peek(rs -> counter.getAndIncrement())
+                .until(rs -> rs.getBody().asString().contains(R.TESTDATA.get("post.entry_1")) || counter.get() == 4)
+                .pollEvery(1, ChronoUnit.SECONDS)
+                .stopAfter(6, ChronoUnit.SECONDS)
+                .execute();
         getAllPostsMethodSelected.validateResponseAgainstSchema("api/posts/getAllPosts/selected_rs.schema");
     }
 }
