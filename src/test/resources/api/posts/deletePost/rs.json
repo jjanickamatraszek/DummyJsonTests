@@ -1,0 +1,14 @@
+{
+  "id": ${id},
+  "title": "${title}",
+  <#if body??>"body": "${body}",</#if>
+  "tags": [
+    "${tag_1}",
+    "${tag_2}",
+    "${tag_3}"
+  ],
+  "reactions": ${reactions},
+  "userId": "skip",
+  "isDeleted": true,
+  "deletedOn": "predicate:todayDatePredicate"
+}

@@ -1,0 +1,54 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "posts": {
+      "type": "array",
+      "items": [
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer"
+            },
+            "body": {
+              "type": "string"
+            },
+
+            "tags": {
+              "type": "array",
+              "items": {
+                        "type": "string"
+                      },
+                     "uniqueItems": true
+                  },
+            "reactions": {
+              "type": "integer"
+            }
+          },
+          "required": [
+            "id",
+            "body",
+            "tags",
+            "reactions"
+          ]
+        }
+      ]
+    },
+    "total": {
+      "type": "integer"
+    },
+    "skip": {
+      "type": "integer"
+    },
+    "limit": {
+      "type": "integer"
+    }
+  },
+  "required": [
+    "posts",
+    "total",
+    "skip",
+    "limit"
+  ]
+}

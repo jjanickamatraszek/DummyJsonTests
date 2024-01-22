@@ -1,0 +1,33 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string"
+    },
+    "body": {
+      "type": "string"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+          "type": "string"
+        },
+       "minItems": 2,
+       "maxItems": 4,
+       "uniqueItems": true
+    },
+    "reactions": {
+      "type": "integer"
+    },
+    "userId": {
+      "type": "integer"
+    }
+  },
+  "required": [
+    "title",
+    "body",
+    "reactions",
+    "userId"
+  ]
+}
