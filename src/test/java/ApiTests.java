@@ -202,8 +202,8 @@ public class ApiTests implements IAbstractTest {
     @TestCaseKey(value = "JOANNA-67")
     public void getSelectedEntriesFromGetAllPostTest() {
 //        List<String> selectedEntries = List.of(R.TESTDATA.get("post.entry_1"), R.TESTDATA.get("post.entry_2"), R.TESTDATA.get("post.entry_3"));
-        List<String> selectedEntries = List.of("tags","reactions","body");
-        GetAllPostsMethod getAllPostsMethodSelected = new GetAllPostsMethod(selectedEntries);
+        String expectedEntries = "tags,reactions,body";
+        GetAllPostsMethod getAllPostsMethodSelected = new GetAllPostsMethod(expectedEntries);
 
         AtomicInteger counter = new AtomicInteger(0);
         getAllPostsMethodSelected.callAPIWithRetry()

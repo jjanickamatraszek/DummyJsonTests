@@ -18,6 +18,10 @@ public class GetAllPostsMethod extends AbstractApiMethodV2 {
         addUrlParameter("limit", String.valueOf(limit));
     }
 
+    public GetAllPostsMethod(String selectedEntries) {
+        addUrlParameter("select", selectedEntries);
+    }
+
     public GetAllPostsMethod(List<String> selectedEntries) {
         addUrlParameter("select", String.join(",", selectedEntries));
     }
