@@ -3,19 +3,28 @@
 <suite name="All tests Suite">
     <test name="API tests">
         <classes>
-            <class name="ApiTests">
+            <class name="PostTests">
                 <methods>
                     <include name="addPostWithFullInfoTest"></include>
                     <include name="getPostTest"></include>
                     <include name="updatePostTitleTest"></include>
-                    <include name="deletePost_v1Test"></include>
-                    <include name="deletePost_v2Test"></include>
+                    <include name="deletePostV1Test"></include>
+                    <include name="deletePostV2Test"></include>
                     <include name="getAllPostsLimitedWithSkipTest"></include>
                     <include name="getAllPostsOfUserTest"></include>
                     <include name="dontGetPostsOfNotExistingUser"></include>
                     <include name="searchPostsTest"></include>
                     <include name="getDefaultAllPostResponseWhenLimitAndSkipAreNegativeTest"></include>
                     <include name="getSelectedEntriesFromGetAllPostTest"></include>
+                </methods>
+            </class>
+            <class name="ProductTests">
+                <methods>
+                    <include name="getAllProductsTest"></include>
+                    <include name="addNewProductTest"></include>
+                    <include name="deleteProductTest"></include>
+                    <include name="returnErrorForDeleteProductWithInvalidIdTest"></include>
+                    <include name="getAllProductsCategoriesTest"></include>
                 </methods>
             </class>
         </classes>
