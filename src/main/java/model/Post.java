@@ -9,7 +9,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
-public class PostRs {
+public class Post {
     private String id;
     private String title;
     private String body;

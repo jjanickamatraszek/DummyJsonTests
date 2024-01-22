@@ -1,5 +1,6 @@
 import auth.login.PostUserCredentialsMethod;
 import com.zebrunner.agent.core.annotation.TestCaseKey;
+import com.zebrunner.agent.core.registrar.TestCase;
 import com.zebrunner.carina.api.APIMethodPoller;
 import com.zebrunner.carina.api.apitools.validation.JsonComparatorContext;
 import com.zebrunner.carina.api.http.HttpResponseStatusType;
@@ -7,10 +8,10 @@ import com.zebrunner.carina.core.IAbstractTest;
 import com.zebrunner.carina.utils.R;
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
-import model.DeletePostRs;
-import model.GetAllPostsRs;
-import model.PostRs;
-import model.SearchPostsRs;
+import model.DeletedPost;
+import model.GetAllPosts;
+import model.Post;
+import model.SearchedPosts;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
@@ -35,13 +36,13 @@ public class ApiTests implements IAbstractTest {
         userId = jsonPath.getString("id");
     }
 
-    @DataProvider(name = "get incorrect user ids")
+    @DataProvider(name = "getIncorrectUserIds")
     public Object[][] getIncorrectUserIds() {
         return new Object[][]{
-                {"10000000", "error.userNotFound.message", HttpResponseStatusType.NOT_FOUND_404},
-                {"0", "error.userNotFound.message", HttpResponseStatusType.NOT_FOUND_404},
-                {"-1", "error.userNotFound.message", HttpResponseStatusType.NOT_FOUND_404},
-                {"aa", "error.userIncorrect.message", HttpResponseStatusType.BAD_REQUEST_400}
+                {"10000000", "error.userNotFound.message", HttpResponseStatusType.NOT_FOUND_404, "JOANNA-64"},
+                {"0", "error.userNotFound.message", HttpResponseStatusType.NOT_FOUND_404, "JOANNA-68"},
+                {"-1", "error.userNotFound.message", HttpResponseStatusType.NOT_FOUND_404, "JOANNA-69"},
+                {"aa", "error.userIncorrect.message", HttpResponseStatusType.BAD_REQUEST_400, "JOANNA-70"}
         };
     }
 
@@ -77,7 +78,7 @@ public class ApiTests implements IAbstractTest {
 
     @Test(description = "Test with response validation using JSON template")
     @TestCaseKey(value = "JOANNA-60")
-    public void deletePost_v1Test() {
+    public void deletePostV1Test() {
         DeletePostMethod deletePostMethod = new DeletePostMethod();
         JsonComparatorContext comparatorContext = JsonComparatorContext.context()
                 .<String>withPredicate("todayDatePredicate", date -> date.startsWith(LocalDate.now().toString()));
@@ -88,13 +89,13 @@ public class ApiTests implements IAbstractTest {
 
     @Test(description = "Test with response validation using POJO")
     @TestCaseKey(value = "JOANNA-61")
-    public void deletePost_v2Test() {
+    public void deletePostV2Test() {
         GetAllPostsMethod getAllPostsMethod = new GetAllPostsMethod();
-        GetAllPostsRs allPostAsList = getAllPostsMethod.callAPI().as(GetAllPostsRs.class);
+        GetAllPosts allPostAsList = getAllPostsMethod.callAPI().as(GetAllPosts.class);
 
-        PostRs postToDelete = allPostAsList.getPosts().get(0);
+        Post postToDelete = allPostAsList.getPosts().get(0);
         DeletePostMethod deletePostMethod = new DeletePostMethod(postToDelete.getId());
-        DeletePostRs deletePostRs = deletePostMethod.callAPIExpectSuccess().as(DeletePostRs.class);
+        DeletedPost deletePostRs = deletePostMethod.callAPIExpectSuccess().as(DeletedPost.class);
         SoftAssert soft = new SoftAssert();
         soft.assertEquals(deletePostRs, postToDelete,
                 "Deleted post entries are different from expected post");
@@ -112,9 +113,9 @@ public class ApiTests implements IAbstractTest {
         int expectedSkip = 10;
 
         GetAllPostsMethod getPostsFromBeginningMethod = new GetAllPostsMethod(expectedLimit);
-        GetAllPostsRs getPostsFromBeginningRs = getPostsFromBeginningMethod.callAPI().as(GetAllPostsRs.class);
+        GetAllPosts getPostsFromBeginningRs = getPostsFromBeginningMethod.callAPI().as(GetAllPosts.class);
         GetAllPostsMethod getPostsWithSkipMethod = new GetAllPostsMethod(expectedLimit, expectedSkip);
-        GetAllPostsRs getPostsWithSkipRs = getPostsWithSkipMethod.callAPIExpectSuccess().as(GetAllPostsRs.class);
+        GetAllPosts getPostsWithSkipRs = getPostsWithSkipMethod.callAPIExpectSuccess().as(GetAllPosts.class);
         getPostsWithSkipMethod.validateResponseAgainstSchema("api/posts/getAllPosts/rs.schema");
         SoftAssert soft = new SoftAssert();
         soft.assertNotEquals(getPostsWithSkipRs.getPosts(), getPostsFromBeginningRs.getPosts(),
@@ -148,9 +149,9 @@ public class ApiTests implements IAbstractTest {
         allPostsByUserId.validateResponseAgainstSchema("api/posts/getAllPosts/rs.schema");
     }
 
-    @Test(dataProvider = "get incorrect user ids")
-    @TestCaseKey(value = "JOANNA-64")
-    public void dontGetPostsOfNotExistingUser(String incorrectUserId, String message, HttpResponseStatusType statusType) {
+    @Test(dataProvider = "getIncorrectUserIds")
+    public void dontGetPostsOfNotExistingUser(String incorrectUserId, String message, HttpResponseStatusType statusType, String caseKey) {
+        TestCase.setTestCaseKey(caseKey);
         GetAllPostsByUserIdMethod allPostsByUserId = new GetAllPostsByUserIdMethod(incorrectUserId);
         allPostsByUserId.expectResponseStatus(statusType);
         String expectedErrorMessage = allPostsByUserId.getProperties().getProperty(message).formatted(incorrectUserId);
@@ -166,17 +167,17 @@ public class ApiTests implements IAbstractTest {
         String searchPhrase = "good";
 
         SearchPostsMethod searchPostsMethod = new SearchPostsMethod(searchPhrase);
-        SearchPostsRs searchPostsRs = searchPostsMethod.callAPIExpectSuccess().as(SearchPostsRs.class);
+        SearchedPosts searchPostsRs = searchPostsMethod.callAPIExpectSuccess().as(SearchedPosts.class);
         searchPostsMethod.validateResponseAgainstSchema("api/posts/getAllPosts/rs.schema");
-        int amountOfReturnedPosts = searchPostsRs.getPosts().size();
+        int returnedPostsCount = searchPostsRs.getPosts().size();
         Assert.assertTrue(searchPostsRs.getPosts().size() > 0,
                 "No posts were returned for phrase '%s'".formatted(searchPhrase));
-        long amountOfPostsContainingSearchPhrase = searchPostsRs
+        long filteredPostsCount = searchPostsRs
                 .getPosts()
                 .stream().map(p -> p.getBody())
                 .filter(p -> p.toLowerCase().contains(searchPhrase))
                 .count();
-        Assert.assertEquals(amountOfPostsContainingSearchPhrase, amountOfReturnedPosts,
+        Assert.assertEquals(filteredPostsCount, returnedPostsCount,
                 "Amount of post returned is different than amount of posts containing search phrase '%s' in body".formatted(searchPhrase));
     }
 
@@ -184,10 +185,10 @@ public class ApiTests implements IAbstractTest {
     @TestCaseKey(value = "JOANNA-66")
     public void getDefaultAllPostResponseWhenLimitAndSkipAreNegativeTest() {
         GetAllPostsMethod getAllPostsMethod = new GetAllPostsMethod();
-        GetAllPostsRs expectedGetAllPostsRs = getAllPostsMethod.callAPI().as(GetAllPostsRs.class);
+        GetAllPosts expectedGetAllPostsRs = getAllPostsMethod.callAPI().as(GetAllPosts.class);
 
         GetAllPostsMethod getAllPostsMethodWithNegativeValues = new GetAllPostsMethod(-10, -20);
-        GetAllPostsRs actualGetAllPostsRs = getAllPostsMethodWithNegativeValues.callAPIExpectSuccess().as(GetAllPostsRs.class);
+        GetAllPosts actualGetAllPostsRs = getAllPostsMethodWithNegativeValues.callAPIExpectSuccess().as(GetAllPosts.class);
         SoftAssert soft = new SoftAssert();
         soft.assertEquals(actualGetAllPostsRs.getPosts(), expectedGetAllPostsRs.getPosts(),
                 "List of posts from request with negative values is different than from request without any params");

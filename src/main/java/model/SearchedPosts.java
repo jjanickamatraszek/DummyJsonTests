@@ -7,6 +7,6 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
-public class SearchPostsRs extends GetAllPostsRs {
+public class SearchedPosts extends GetAllPosts {
 
 }

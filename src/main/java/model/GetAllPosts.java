@@ -9,8 +9,8 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
-public class GetAllPostsRs {
-    private List<PostRs> posts;
+public class GetAllPosts {
+    private List<Post> posts;
     private int total;
     private int skip;
     private int limit;

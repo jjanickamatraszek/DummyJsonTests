@@ -10,7 +10,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class DeletePostRs extends PostRs {
+public class DeletedPost extends Post {
 
     @JsonProperty(value = "isDeleted")
     private boolean isDeleted;
