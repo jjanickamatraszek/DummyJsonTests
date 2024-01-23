@@ -33,8 +33,8 @@ public class ProductTests extends BaseTests {
     @Test
     @TestCaseKey("JOANNA-71")
     public void getAllProductsTest() {
-        int expectedLimit = R.TESTDATA.getInt("products.defaultLimit");
-        int expectedSkip = R.TESTDATA.getInt("products.defaultSkip");
+        int expectedLimit = Integer.parseInt(R.TESTDATA.get("products.defaultLimit"));
+        int expectedSkip = Integer.parseInt(R.TESTDATA.get("products.defaultSkip"));
 
         GetAllProductsMethod getAllProducts = new GetAllProductsMethod();
         Response allProductsRs = getAllProducts.callAPIExpectSuccess();
