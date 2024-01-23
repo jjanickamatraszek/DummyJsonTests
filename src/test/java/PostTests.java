@@ -2,9 +2,7 @@ import auth.login.PostUserCredentialsMethod;
 import com.zebrunner.agent.core.annotation.TestCaseKey;
 import com.zebrunner.agent.core.registrar.TestCase;
 import com.zebrunner.carina.api.APIMethodPoller;
-import com.zebrunner.carina.api.apitools.validation.JsonComparatorContext;
 import com.zebrunner.carina.api.http.HttpResponseStatusType;
-import com.zebrunner.carina.core.IAbstractTest;
 import com.zebrunner.carina.utils.R;
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
@@ -26,7 +24,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class ApiTests implements IAbstractTest {
+public class PostTests extends BaseTests {
     private String userId;
 
     @BeforeClass
@@ -80,8 +78,6 @@ public class ApiTests implements IAbstractTest {
     @TestCaseKey(value = "JOANNA-60")
     public void deletePostV1Test() {
         DeletePostMethod deletePostMethod = new DeletePostMethod();
-        JsonComparatorContext comparatorContext = JsonComparatorContext.context()
-                .<String>withPredicate("todayDatePredicate", date -> date.startsWith(LocalDate.now().toString()));
         deletePostMethod.callAPIExpectSuccess();
         deletePostMethod.validateResponse(comparatorContext);
         deletePostMethod.validateResponseAgainstSchema("api/posts/deletePost/rs.schema");

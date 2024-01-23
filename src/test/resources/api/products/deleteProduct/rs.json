@@ -1,0 +1,15 @@
+{
+  "id": ${id},
+  "title": "${title}",
+  "description": "${description}",
+  "price": ${price},
+  "discountPercentage": ${discountPercentage},
+  "rating": ${rating},
+  "stock": ${stock},
+  "brand": "${brand}",
+  "category": "predicate:isProductCategory",
+  "thumbnail": "skip",
+  "images": "skip",
+  "isDeleted": true,
+  "deletedOn": "predicate:todayDatePredicate"
+}

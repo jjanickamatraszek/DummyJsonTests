@@ -1,0 +1,12 @@
+{
+  "id": "type:Integer",
+  "title": "${title}",
+  "description": "${description}",
+  "price": ${price},
+  "brand": "${brand}",
+  <#if discountPercentage??>"discountPercentage": "skip",</#if>
+  "rating": "predicate:isPositiveAndLTE10",
+  "stock": ${stock},
+  "category": "predicate:isProductCategory",
+  "images": "skip"
+}
